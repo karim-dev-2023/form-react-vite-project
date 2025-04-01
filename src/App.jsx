@@ -40,6 +40,7 @@ function App() {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              required
             />
           </FloatingLabel>
 
@@ -50,6 +51,7 @@ function App() {
               type="date"
               value={formData.date}
               onChange={handleChange}
+              required
             />
           </FloatingLabel>
 
