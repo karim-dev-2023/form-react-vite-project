@@ -4,13 +4,14 @@ import { Container, FloatingLabel, Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
 function App() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit,reset } = useForm({
     defaultValues: {
       priority: "1",
     },
   });
   const onSubmit = (data) => {
     console.log(data);
+    reset();
   };
 
   return (
@@ -36,18 +37,11 @@ function App() {
               placeholder="La date"
               {...register("date", {
                 required: "La date est obligatoire",
-                validate: (value) => {
-                  const today = new Date().toISOString().split("T")[0];
-                  return (
-                    value >= today || "La date ne peut pas être dans le passé"
-                  );
-                },
+               
               })}
-              isInvalid={!!errors.date}
+          
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.date?.message}
-            </Form.Control.Feedback>
+            
           </FloatingLabel>
 
           {/* Priorité */}
