@@ -2,21 +2,49 @@ import "./App.css";
 import { Container, FloatingLabel, Form, Button } from "react-bootstrap";
 
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  name: yup
+    .string()
+    .required("Le nom est requis")
+    .min(8, "Minimum 8 caractères")
+    .max(15, "Maximum 15 caractères"),
+  dateTask: yup
+    .string()
+    .required("La date est requise")
+    .matches(
+      /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/,
+      "La date n'est pas au format jj/mm/aaaa"
+    )
+    
+    .test(
+      "is-future-date",
+      "La date doit être dans le futur",
+      function (value) {
+        const [day, month, year] = value.split("/").map(Number);
+        const inputDate = new Date(year, month - 1, day);
+        const now = new Date();
+
+        return inputDate >= now;
+      }
+    ),
+
+  priority: yup.string().default(1),
+  taskComplete: yup.boolean(),
+});
 
 function App() {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      priority: "1",
-    },
+    resolver: yupResolver(schema),
   });
   const onSubmit = (data) => {
     console.log(data);
-    reset();
   };
 
   return (
@@ -31,7 +59,7 @@ function App() {
           >
             <Form.Control
               placeholder="Votre nom"
-              {...register("name", { required: "La nom est obligatoire" })}
+              {...register("name")}
               isInvalid={!!errors.name}
             />
             {errors.name && (
@@ -44,16 +72,13 @@ function App() {
           {/* Date */}
           <FloatingLabel controlId="floatingdate" label="Date" className="mb-3">
             <Form.Control
-              type="date"
               placeholder="La date"
-              {...register("date", {
-                required: "La date est obligatoire",
-              })}
-              isInvalid={!!errors.date}
+              {...register("dateTask")}
+              isInvalid={!!errors.dateTask}
             />
-            {errors.date && (
+            {errors.dateTask && (
               <Form.Control.Feedback type="invalid">
-                {errors.date?.message}
+                {errors.dateTask?.message}
               </Form.Control.Feedback>
             )}
           </FloatingLabel>
