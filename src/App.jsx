@@ -18,20 +18,23 @@ const schema = yup.object().shape({
       /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/,
       "La date n'est pas au format jj/mm/aaaa"
     )
-    
+
     .test(
-      "is-future-date",
-      "La date doit être dans le futur",
+      "is-today-or-future",
+      "La date doit être aujourd'hui ou dans le futur",
       function (value) {
+        if (!value) return false;
+
         const [day, month, year] = value.split("/").map(Number);
         const inputDate = new Date(year, month - 1, day);
-        const now = new Date();
+        const today = new Date();
 
-        return inputDate >= now;
+        today.setHours(0, 0, 0, 0);
+        inputDate.setHours(0, 0, 0, 0);
+
+        return inputDate >= today;
       }
     ),
-
-  priority: yup.string().default(1),
   taskComplete: yup.boolean(),
 });
 
@@ -42,6 +45,7 @@ function App() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    priority: "1",
   });
   const onSubmit = (data) => {
     console.log(data);
