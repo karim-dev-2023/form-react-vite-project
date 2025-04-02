@@ -1,33 +1,22 @@
 import "./App.css";
 import { Container, FloatingLabel, Form, Button } from "react-bootstrap";
 
-import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 
 function App() {
-  const [formData, setFormData] = useState({
-    name: "",
-    date: "",
-    priority: "1",
-    taskComplete: false,
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      priority: "1",
+    },
   });
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData, // On décompose le formulaire existant pour garder toutes les valeurs
-      [name]: type === "checkbox" ? checked : value,   // On change le comportement selon le type
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
+  const onSubmit = (data) => {
+    console.log(data);
   };
 
   return (
     <>
       <Container>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
           {/* Nom */}
           <FloatingLabel
             controlId="floatingName"
@@ -35,24 +24,30 @@ function App() {
             className="mb-3 mt-5"
           >
             <Form.Control
-              type="text"
-              placeholder="Rimk"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
+              {...register("name", { required: true })}
+              placeholder="Votre nom"
             />
           </FloatingLabel>
 
           {/* Date */}
           <FloatingLabel controlId="floatingdate" label="Date" className="mb-3">
             <Form.Control
-              name="date"
               type="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
+              placeholder="La date"
+              {...register("date", {
+                required: "La date est obligatoire",
+                validate: (value) => {
+                  const today = new Date().toISOString().split("T")[0];
+                  return (
+                    value >= today || "La date ne peut pas être dans le passé"
+                  );
+                },
+              })}
+              isInvalid={!!errors.date}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.date?.message}
+            </Form.Control.Feedback>
           </FloatingLabel>
 
           {/* Priorité */}
@@ -63,9 +58,7 @@ function App() {
           >
             <Form.Select
               aria-label="Floating label select example"
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
+              {...register("priority")}
             >
               <option value="1">Basse</option>
               <option value="2">Moyenne</option>
@@ -78,9 +71,7 @@ function App() {
             type="switch"
             id="custom-switch"
             label="Tache terminer"
-            name="taskComplete"
-            value={formData.taskComplete}
-            onChange={handleChange}
+            {...register("taskComplete")}
           />
 
           <Button type="submit" variant="primary">
