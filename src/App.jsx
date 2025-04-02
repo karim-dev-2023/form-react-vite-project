@@ -35,6 +35,10 @@ const schema = yup.object().shape({
         return inputDate >= today;
       }
     ),
+
+  priority: yup.string()
+  .oneOf(["1", "2","3"], "La priorité est invalide")
+  .required("La priorité est obligatoire"),
   taskComplete: yup.boolean(),
 });
 
@@ -96,11 +100,18 @@ function App() {
             <Form.Select
               aria-label="Floating label select example"
               {...register("priority")}
+              isInvalid={!!errors.priority}
             >
               <option value="1">Basse</option>
               <option value="2">Moyenne</option>
               <option value="3">Élevée</option>
+             
             </Form.Select>
+            {errors.priority && (
+              <Form.Control.Feedback type="invalid">
+                {errors.priority?.message}
+              </Form.Control.Feedback>
+            )}
           </FloatingLabel>
 
           {/* Tache terminé */}
