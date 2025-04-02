@@ -31,12 +31,14 @@ function App() {
           >
             <Form.Control
               placeholder="Votre nom"
-              {...register("name", { required: "La nom est obligatoire", })}
+              {...register("name", { required: "La nom est obligatoire" })}
               isInvalid={!!errors.name}
             />
-             <Form.Control.Feedback type="invalid">
-              {errors.name?.message}
-            </Form.Control.Feedback>
+            {errors.name && (
+              <Form.Control.Feedback type="invalid">
+                {errors.name?.message}
+              </Form.Control.Feedback>
+            )}
           </FloatingLabel>
 
           {/* Date */}
@@ -49,9 +51,11 @@ function App() {
               })}
               isInvalid={!!errors.date}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.date?.message}
-            </Form.Control.Feedback>
+            {errors.date && (
+              <Form.Control.Feedback type="invalid">
+                {errors.date?.message}
+              </Form.Control.Feedback>
+            )}
           </FloatingLabel>
 
           {/* Priorité */}
