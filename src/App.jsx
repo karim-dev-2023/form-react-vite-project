@@ -4,7 +4,12 @@ import { Container, FloatingLabel, Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
 function App() {
-  const { register, handleSubmit,reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       priority: "1",
     },
@@ -25,9 +30,13 @@ function App() {
             className="mb-3 mt-5"
           >
             <Form.Control
-              {...register("name", { required: true })}
               placeholder="Votre nom"
+              {...register("name", { required: "La nom est obligatoire", })}
+              isInvalid={!!errors.name}
             />
+             <Form.Control.Feedback type="invalid">
+              {errors.name?.message}
+            </Form.Control.Feedback>
           </FloatingLabel>
 
           {/* Date */}
@@ -37,11 +46,12 @@ function App() {
               placeholder="La date"
               {...register("date", {
                 required: "La date est obligatoire",
-               
               })}
-          
+              isInvalid={!!errors.date}
             />
-            
+            <Form.Control.Feedback type="invalid">
+              {errors.date?.message}
+            </Form.Control.Feedback>
           </FloatingLabel>
 
           {/* Priorité */}
